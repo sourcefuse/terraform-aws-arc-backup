@@ -71,6 +71,8 @@ module "backup_vault" {
 
 # Resources are selected based on tags
 resource "aws_backup_selection" "this" {
+  count = var.backup_selection_data == null ? 0 : 1
+
   iam_role_arn = var.create_role ? aws_iam_role.this[0].arn : data.aws_iam_role.this[0].arn
   name         = var.backup_selection_data.name
   plan_id      = aws_backup_plan.this[0].id
@@ -93,7 +95,7 @@ resource "aws_backup_selection" "this" {
 resource "aws_backup_vault_lock_configuration" "this" {
   count = var.vault_lock_configuration == null ? 0 : 1
 
-  backup_vault_name   = var.backup_plan.name
+  backup_vault_name   = var.backup_vault_data.name
   changeable_for_days = var.vault_lock_configuration.changeable_for_days
   max_retention_days  = var.vault_lock_configuration.max_retention_days
   min_retention_days  = var.vault_lock_configuration.min_retention_days

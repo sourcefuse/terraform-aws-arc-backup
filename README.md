@@ -1,18 +1,188 @@
-# terraform-aws-module-template
+# [terraform-aws-arc-backup](https://github.com/sourcefuse/terraform-aws-arc-backup)
 
-## Overview
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sourcefuse_terraform-aws-arc-backup)](https://sonarcloud.io/summary/new_code?id=sourcefuse_terraform-aws-arc-backup)
 
-SourceFuse AWS Reference Architecture (ARC) Terraform module for managing _________.
+[![Known Vulnerabilities](https://github.com/sourcefuse/terraform-aws-arc-backup/actions/workflows/snyk.yaml/badge.svg)](https://github.com/sourcefuse/terraform-aws-arc-backup/actions/workflows/snyk.yaml)
 
-## Usage
+## Introduction
 
-To see a full example, check out the [main.tf](./example/main.tf) file in the example folder.  
+SourceFuse's AWS Reference Architecture (ARC) Terraform module centralizes and automates the backup of data across AWS services such as Amazon RDS, EBS, DynamoDB, EFS, and more. It allows you to schedule automated backups, and manage and monitor backup activity from a single console, ensuring compliance and data protection. AWS Backup also supports cross-region and cross-account backup capabilities for enhanced data durability and disaster recovery.
+
+### Prerequisites
+Before using this module, ensure you have the following:
+
+- AWS credentials configured.
+- Terraform installed.
+- A working knowledge of Terraform.
+
+## Getting Started
+
+1. **Define the Module**
+
+Initially, it's essential to define a Terraform module, which is organized as a distinct directory encompassing Terraform configuration files. Within this module directory, input variables and output values must be defined in the variables.tf and outputs.tf files, respectively. The following illustrates an example directory structure:
+
+
+
+```plaintext
+billing/
+|-- main.tf
+|-- variables.tf
+|-- outputs.tf
+```
+
+
+2. **Define Input Variables**
+
+Inside the `variables.tf` or in `*.tfvars` file, you should define values for the variables that the module requires.
+
+3. **Use the Module in Your Main Configuration**
+In your main Terraform configuration file (e.g., main.tf), you can use the module. Specify the source of the module, and version, For Example
 
 ```hcl
-module "this" {
-  source = "git::https://github.com/sourcefuse/terraform-aws-refarch-<module_name>"
+module "example" {
+  source      = "sourcefuse/arc-backup/aws"
+  version     = "0.0.1"
+
+  backup_vault_data        = local.backup_vault_data
+  backup_plan              = local.backup_plan
+  create_role              = true
+  role_name                = local.backup_role_name
+  backup_selection_data    = local.backup_selection_data
+  vault_lock_configuration = local.vault_lock_configuration
+
+  tags = module.tags.tags
 }
 ```
+
+4. **Output Values**
+
+Inside the `outputs.tf` file of the module, you can define output values that can be referenced in the main configuration. For example:
+
+```hcl
+output "backup_plan_id" {
+  description = "AWS backups plan ID"
+  value       = module.example.backup_plan_id
+}
+
+output "vault_arn" {
+  description = "Vault ARN"
+  value       = module.example.vault_arn
+}
+
+```
+
+5. **.tfvars**
+
+Inside the `.tfvars` file of the module, you can provide desired values that can be referenced in the main configuration. For example:
+
+Edit the [locals.tf](./example/locals.tf) file and provide desired values.  
+`backup_plan` - variable is used to define Backup plan and lifecycle policies.
+
+`backup_vault_data` - Defines where backup has to be stored
+
+`backup_selection_data` - Which all resources needs backup
+
+```hcl
+locals {
+  prefix = "arc-dev"
+
+  backup_plan_name = "${local.prefix}-backup-plan"
+  backup_role_name = "${local.prefix}-backup-restore"
+  vault_name       = "${local.prefix}-backup-vault-1"
+
+  backup_vault_data = {
+    name                            = local.vault_name
+    enable_encryption               = true
+    backup_role_name                = local.backup_role_name
+    kms_key_deletion_window_in_days = 7
+    kms_key_admin_arns              = []
+  }
+
+
+  backup_plan = {
+    name = local.backup_plan_name
+
+    rules = [{
+      name                     = "backup-rule-1"
+      target_vault_name        = local.vault_name
+      schedule                 = "cron(0 12 * * ? *)"
+      recovery_point_tags      = module.tags.tags
+      enable_continuous_backup = true
+
+      lifecycle = [{ // its mandatory if `enable_continuous_backup = true` , error: Lifecycle must be specified for backup rule enabled continuous backup
+        cold_storage_after = 0
+        delete_after       = 35
+      }]
+    }]
+  }
+
+  backup_selection_data = {
+    name      = "${local.prefix}-backup-selection"
+    plan_name = local.backup_plan_name
+    resources = ["*"]
+    selection_tags = [{
+      type  = "string"
+      key   = "enable_backup"
+      value = "true"
+      }
+    ]
+  }
+
+  vault_lock_configuration = {
+    changeable_for_days = 3 // it has to be atleast 3
+    max_retention_days  = 2
+    min_retention_days  = 1
+  }
+
+}
+```
+
+## First Time Usage
+***uncomment the backend block in [main.tf](./example/main.tf)***
+```shell
+terraform init -backend-config=config.dev.hcl
+```
+***If testing locally, `terraform init` should be fine***
+
+Create a `dev` workspace
+```shell
+terraform workspace new dev
+```
+
+Plan Terraform
+```shell
+terraform plan -var-file dev.tfvars
+```
+
+Apply Terraform
+```shell
+terraform apply -var-file dev.tfvars
+```
+
+## Production Setup
+```shell
+terraform init -backend-config=config.prod.hcl
+```
+
+Create a `prod` workspace
+```shell
+terraform workspace new prod
+```
+
+Plan Terraform
+```shell
+terraform plan -var-file prod.tfvars
+```
+
+Apply Terraform
+```shell
+terraform apply -var-file prod.tfvars  
+```
+
+## Cleanup  
+Destroy Terraform
+```shell
+terraform destroy -var-file dev.tfvars
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -63,7 +233,9 @@ module "this" {
 | Name | Description |
 |------|-------------|
 | <a name="output_backup_plan_id"></a> [backup\_plan\_id](#output\_backup\_plan\_id) | AWS backups plan ID |
-| <a name="output_backup_role_arn"></a> [backup\_role\_arn](#output\_backup\_role\_arn) | IAM Role for taking backups |
+| <a name="output_backup_role_arn"></a> [backup\_role\_arn](#output\_backup\_role\_arn) | n/a |
+| <a name="output_backup_role_name"></a> [backup\_role\_name](#output\_backup\_role\_name) | n/a |
+| <a name="output_vault_arn"></a> [vault\_arn](#output\_vault\_arn) | ARN of Vault |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Versioning  
