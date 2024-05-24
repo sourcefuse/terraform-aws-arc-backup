@@ -1,6 +1,6 @@
 # [terraform-aws-arc-backup](https://github.com/sourcefuse/terraform-aws-arc-backup)
 
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sourcefuse_terraform-aws-arc-backup)](https://sonarcloud.io/summary/new_code?id=sourcefuse_terraform-aws-arc-backup)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sourcefuse_terraform-aws-arc-backup&token=60624a873010f605d7341260fc7748bcb0819713)](https://sonarcloud.io/summary/new_code?id=sourcefuse_terraform-aws-arc-backup)
 
 [![Known Vulnerabilities](https://github.com/sourcefuse/terraform-aws-arc-backup/actions/workflows/snyk.yaml/badge.svg)](https://github.com/sourcefuse/terraform-aws-arc-backup/actions/workflows/snyk.yaml)
 
