@@ -95,7 +95,7 @@ resource "aws_backup_selection" "this" {
 resource "aws_backup_vault_lock_configuration" "this" {
   count = var.vault_lock_configuration == null ? 0 : 1
 
-  backup_vault_name   = var.backup_vault_data.name
+  backup_vault_name   = var.vault_lock_configuration.vault_name
   changeable_for_days = var.vault_lock_configuration.changeable_for_days
   max_retention_days  = var.vault_lock_configuration.max_retention_days
   min_retention_days  = var.vault_lock_configuration.min_retention_days

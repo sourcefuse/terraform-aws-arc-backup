@@ -74,6 +74,7 @@ variable "backup_selection_data" {
 
 variable "vault_lock_configuration" {
   type = object({
+    vault_name          = string
     changeable_for_days = number
     max_retention_days  = number
     min_retention_days  = number

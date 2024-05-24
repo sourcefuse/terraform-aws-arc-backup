@@ -3,10 +3,19 @@ locals {
 
   backup_plan_name = "${local.prefix}-backup-plan"
   backup_role_name = "${local.prefix}-backup-restore"
-  vault_name       = "${local.prefix}-backup-vault-1"
+  vault_name       = "${local.prefix}-backup-vault"
+  dr_vault_name    = "${local.prefix}-backup-vault-dr"
 
   backup_vault_data = {
     name                            = local.vault_name
+    enable_encryption               = true
+    backup_role_name                = local.backup_role_name
+    kms_key_deletion_window_in_days = 7
+    kms_key_admin_arns              = []
+  }
+
+  dr_backup_vault_data = {
+    name                            = local.dr_vault_name
     enable_encryption               = true
     backup_role_name                = local.backup_role_name
     kms_key_deletion_window_in_days = 7
@@ -44,6 +53,14 @@ locals {
   }
 
   vault_lock_configuration = {
+    vault_name          = local.vault_name
+    changeable_for_days = 3 // it has to be atleast 3
+    max_retention_days  = 2
+    min_retention_days  = 1
+  }
+
+  dr_vault_lock_configuration = {
+    vault_name          = local.dr_vault_name
     changeable_for_days = 3 // it has to be atleast 3
     max_retention_days  = 2
     min_retention_days  = 1

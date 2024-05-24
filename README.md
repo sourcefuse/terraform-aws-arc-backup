@@ -226,7 +226,7 @@ terraform destroy -var-file dev.tfvars
 | <a name="input_create_role"></a> [create\_role](#input\_create\_role) | (optional) Role Required for taking backup and restore | `bool` | `true` | no |
 | <a name="input_role_name"></a> [role\_name](#input\_role\_name) | IAM role name | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags for AWS backup service | `map(string)` | n/a | yes |
-| <a name="input_vault_lock_configuration"></a> [vault\_lock\_configuration](#input\_vault\_lock\_configuration) | (optional) Vault lock configuration , changeable\_for\_days > 0 , then its `governance` else `compliance` mode | <pre>object({<br>    changeable_for_days = number<br>    max_retention_days  = number<br>    min_retention_days  = number<br>  })</pre> | `null` | no |
+| <a name="input_vault_lock_configuration"></a> [vault\_lock\_configuration](#input\_vault\_lock\_configuration) | (optional) Vault lock configuration , changeable\_for\_days > 0 , then its `governance` else `compliance` mode | <pre>object({<br>    vault_name          = string<br>    changeable_for_days = number<br>    max_retention_days  = number<br>    min_retention_days  = number<br>  })</pre> | `null` | no |
 
 ## Outputs
 
