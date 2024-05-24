@@ -8,7 +8,7 @@ This document provides guidelines and instructions for users looking to implemen
 
 ### Module Overview
 
-The [terraform-aws-arc-backup](https://github.com/sourcefuse/terraform-aws-arc-backup) module provides a secure and modular foundation for managing AWS budgets, and sending backup alarms to Slack.
+The [terraform-aws-arc-backup](https://github.com/sourcefuse/terraform-aws-arc-backup) module creates AWS backup plan, Backup Vault , Vault lock etc
 
 ### Prerequisites
 
@@ -16,7 +16,7 @@ Before using this module, ensure you have the following:
 
 - AWS credentials configured.
 - Terraform installed.
-- A working knowledge of AWS budgets and backup
+- A working knowledge of AWS Backup
 
 ## Getting Started
 
@@ -25,10 +25,18 @@ Before using this module, ensure you have the following:
 To use the module in your Terraform configuration, include the following source block:
 
 ```hcl
-module "example_budgets" {
-  source  = "sourcefuse/arc-backup/aws"
-  version = "1.0.0"
-  # insert the required variables here
+module "example" {
+  source      = "sourcefuse/arc-backup/aws"
+  version     = "0.0.1"
+
+  backup_vault_data        = local.backup_vault_data
+  backup_plan              = local.backup_plan
+  create_role              = true
+  role_name                = local.backup_role_name
+  backup_selection_data    = local.backup_selection_data
+  vault_lock_configuration = local.vault_lock_configuration
+
+  tags = module.tags.tags
 }
 ```
 
@@ -36,8 +44,8 @@ module "example_budgets" {
 
 Integrate the module with your existing Terraform mono repo configuration, follow the steps below:
 
-1. Create a new folder in `terraform/` named `backup-alerts`.
-2. Create the required files, see the [examples](https://github.com/sourcefuse/terraform-aws-arc-backup/tree/main/examples/simple) to base off of.
+1. Create a new folder in `terraform/` named `backup`.
+2. Create the required files, see the [examples](https://github.com/sourcefuse/terraform-aws-arc-backup/tree/main/example) to base off of.
 3. Configure with your backend
   - Create the environment backend configuration file: `config.<environment>.hcl`
     - **region**: Where the backend resides
@@ -64,17 +72,17 @@ For a list of outputs, see the README [Outputs](https://github.com/sourcefuse/te
 
 ### Basic Usage
 
-For basic usage, see the [example](https://github.com/sourcefuse/terraform-aws-arc-backup/tree/main/example) folder.
+For usage, see the [example](https://github.com/sourcefuse/terraform-aws-arc-backup/tree/main/example) folder.
 
 This example will create:
 
-AWS Budgets based on the `var.budgets` variable. AWS Budgets gives you the ability to set custom cost and usage budgets that alert you when your costs or usage exceed your budgeted amount.
+AWS Backup plan, Backup vault , Vault lock and backup vault in secondary region,  based on the `locals.tf` variables.
 
-`notifications_enabled` and `encryption_enabled` are flags to enable notifications and encryption respectively.
+`backup_plan` - variable is used to define Backup plan and lifecycle policies.
 
-`slack_webhook_url`, `slack_channel`, and `slack_username` are used to configure notifications to a Slack channel.
+`backup_vault_data` - Defines where backup has to be stored
 
-`backup_alerts_sns_subscribers` is a list of email addresses that will receive notifications when the budget thresholds are breached.
+`backup_selection_data` - Which all resources needs backup
 
 ### Tips and Recommendations
 
@@ -88,10 +96,6 @@ If you encounter a bug or issue, please report it on the [GitHub repository](htt
 
 ## Security Considerations
 
-### AWS VPC
-
-Understand the security considerations related to AWS backup when using this module.
-
 ### Best Practices for AWS backup
 
 Follow best practices to ensure secure backup configurations.
@@ -102,10 +106,6 @@ Follow best practices to ensure secure backup configurations.
 ### Contributing Guidelines
 
 Contribute to the module by following the guidelines outlined in the [CONTRIBUTING.md](https://github.com/sourcefuse/terraform-aws-arc-backup/blob/main/CONTRIBUTING.md) file.
-
-### Reporting Bugs and Issues
-
-If you find a bug or issue, report it on the [GitHub repository](https://github.com/sourcefuse/terraform-aws-arc-backup/issues).
 
 ## License
 

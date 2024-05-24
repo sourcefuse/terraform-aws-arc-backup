@@ -48,7 +48,7 @@ variable "backup_vault_data" {
 variable "create_role" {
   type        = bool
   description = "(optional) Role Required for taking backup and restore"
-  default     = false
+  default     = true
 }
 
 variable "role_name" {
