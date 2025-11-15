@@ -61,6 +61,7 @@ module "backup_vault" {
   name                            = var.backup_vault_data.name
   enable_encryption               = var.backup_vault_data.enable_encryption
   backup_role_name                = var.backup_vault_data.backup_role_name
+  kms_key_arn                     = var.backup_vault_data.kms_key_arn
   kms_key_deletion_window_in_days = var.backup_vault_data.kms_key_deletion_window_in_days
   kms_key_admin_arns              = var.backup_vault_data.kms_key_admin_arns
 

@@ -38,6 +38,7 @@ variable "backup_vault_data" {
     name                            = string
     backup_role_name                = string
     enable_encryption               = optional(bool, true)
+    kms_key_arn                     = optional(string, null)
     kms_key_deletion_window_in_days = optional(number, 7)
     kms_key_admin_arns              = optional(list(string), [])
   })

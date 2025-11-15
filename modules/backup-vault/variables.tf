@@ -31,3 +31,9 @@ variable "backup_role_name" {
   description = "IAM role used to take backup of AWS resources"
   type        = string
 }
+
+variable "kms_key_arn" {
+  description = "ARN of an existing KMS key to use for encryption. If not provided, a new KMS key will be created."
+  type        = string
+  default     = null
+}
