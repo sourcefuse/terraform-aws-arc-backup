@@ -226,7 +226,7 @@ terraform apply -var-file prod.tfvars
 ## Cleanup  
 Destroy Terraform
 ```shell
-terraform destroy -var-file dev.t
+terraform destroy -var-file dev.tfvars
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
