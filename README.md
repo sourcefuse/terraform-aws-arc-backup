@@ -32,6 +32,8 @@ Centralizes AWS Backup configuration — vaults, plans, schedules, and resource 
 - Cross-region copy actions
 - IAM role for backup and restore
 
+For more information about this repository and its usage, please see [Terraform AWS Backup Usage Guide](https://github.com/sourcefuse/terraform-aws-arc-backup/blob/main/docs/module-usage-guide/README.md).
+
 ## Quickstart
 
 SourceFuse's AWS Reference Architecture (ARC) Terraform module centralizes and automates the backup of data across AWS services such as Amazon RDS, EBS, DynamoDB, EFS, and more. It allows you to schedule automated backups, and manage and monitor backup activity from a single console, ensuring compliance and data protection. AWS Backup also supports cross-region and cross-account backup capabilities for enhanced data durability and disaster recovery.
