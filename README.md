@@ -19,6 +19,9 @@
 
 [![Quality Gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sourcefuse_terraform-aws-arc-backup&token=114a52a83d2ede2ba64f617fd805aa7e68c0eaf1)](https://sonarcloud.io/summary/new_code?id=sourcefuse_terraform-aws-arc-backup)
 
+> [!TIP]
+> 🤖 **New:** Use this module with AI assistants via the [ARC IaC MCP Server](https://github.com/sourcefuse/arc-iac-mcp) — search, scaffold, and security-scan ARC modules from natural language. [Quick setup ↓](#ai-assistant-integration-arc-iac-mcp)
+
 ## Overview
 
 Centralizes AWS Backup configuration — vaults, plans, schedules, and resource selections — with optional vault lock and KMS encryption.
